@@ -54,6 +54,9 @@ class DB:
                     .filter(Track.user_id == self.user_id)
                     .order_by(Track.added_at.desc())
                     .first()
-                    .track_id
                 )
+            self.__last_track = (
+                0 if self.__last_track is None else self.__last_track.track_id
+            )
+
         return self.__last_track
