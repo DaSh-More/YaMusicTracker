@@ -23,6 +23,7 @@ async def check_track(
     delay: int,
     max_delay: int,
     min_listen_time: int,
+    time_shift:int,
 ) -> int:
     current_track = get_current_track(client)
     if current_track["track"]["track_id"] == db.get_last_track():
@@ -35,11 +36,11 @@ async def check_track(
 
     time_to_end = (
         int(current_track["duration_ms"]) - int(current_track["progress_ms"])
-    ) / 1000
+    ) / 1000 + time_shift
 
-    time_to_min_listen_time = min_listen_time - int(
-        current_track["progress_ms"] 
-    ) / 1000
+    time_to_min_listen_time = (
+        min_listen_time - int(current_track["progress_ms"]) / 1000 + time_shift
+    )
 
     if time_to_min_listen_time > 0:
         return time_to_min_listen_time
@@ -51,11 +52,14 @@ async def mainloop(client: ClientAsync, db: DB, config: Config):
     min_listen_time = config.get("min_listen_time_s")
     delay = config.get("delay_s")
     max_delay = config.get("max_delay_s")
+    time_shift = config.get("time_shift_s")
     acs = await client.accountStatus()
     db.set_user_id(acs.account.login)
 
     while True:
-        time_sleep = await check_track(client, db, delay, max_delay, min_listen_time)
+        time_sleep = await check_track(
+            client, db, delay, max_delay, min_listen_time, time_shift
+        )
         logger.info(f"sleep {time_sleep} s")
         await asyncio.sleep(time_sleep)
 

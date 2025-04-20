@@ -31,10 +31,10 @@ class DB:
 
     def add_track(self, track: dict):
         track_id = int(track["track"]["track_id"])
-        self.__last_track = track_id
         track_title = track["track"]["title"]
         if self.get_last_track() == track_id:
             return
+        self.__last_track = track_id
         added_at = dt.now() - timedelta(milliseconds=int(track["progress_ms"]))
         with self.Session() as session:
             new_track = Track(
