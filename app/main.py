@@ -37,9 +37,9 @@ async def check_track(
         int(current_track["duration_ms"]) - int(current_track["progress_ms"])
     ) / 1000
 
-    time_to_min_listen_time = (
-        min_listen_time - int(current_track["progress_ms"])
-    ) / 1000
+    time_to_min_listen_time = min_listen_time - int(
+        current_track["progress_ms"] / 1000
+    ) 
 
     if time_to_min_listen_time > 0:
         return time_to_min_listen_time
