@@ -23,9 +23,16 @@ async def check_track(
     delay: int,
     max_delay: int,
     min_listen_time: int,
-    time_shift:int,
+    time_shift: int,
 ) -> int:
-    current_track = get_current_track(client)
+    try:
+        current_track = get_current_track(client)
+    except:
+        # Если не удалось получить трек, возвращаем стандартную задержку
+        return delay
+    # Если не обнаружен трек, возвращаем стандартную задержку
+    if not current_track:
+        return delay
     if current_track["track"]["track_id"] == db.get_last_track():
         logger.info(f'track "{current_track["track"]["title"]}" already in db')
     elif int(current_track["progress_ms"]) >= min_listen_time * 1000:
