@@ -28,10 +28,12 @@ async def check_track(
     try:
         current_track = get_current_track(client)
     except:
+        logger.error("error get current track")
         # Если не удалось получить трек, возвращаем стандартную задержку
         return delay
     # Если не обнаружен трек, возвращаем стандартную задержку
     if not current_track:
+        logger.error("track missing")
         return delay
     if current_track["track"]["track_id"] == db.get_last_track():
         logger.info(f'track "{current_track["track"]["title"]}" already in db')
